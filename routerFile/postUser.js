@@ -1,3 +1,4 @@
+const { query } = require("express")
 const express = require("express")
 const posts = express.Router()
 const {PostsModel} = require("../modelFile/postsModel")
@@ -10,11 +11,22 @@ posts.get("/", async (req, res)=>{
         let filterData = data.filter((item)=>{
             return id == item.userID
         })
-        res.send(filterData)
+        let device1 = req.query.device1
+        let device2 = req.query.device2
+        if(device1 || device2){
+            let data = await PostsModel.find({$or:[{device:device1},{device:device2}]})
+            res.send(data)
+        }else{
+
+            res.send(filterData)
+        }
     } catch (error) {
         console.log("something went wrong in get  data")
     }
 })
+
+
+
 
 posts.post("/create",async (req, res)=>{
     try {
